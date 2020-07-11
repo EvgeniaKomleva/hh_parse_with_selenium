@@ -8,18 +8,33 @@ from selenium import webdriver
 from bs4 import BeautifulSoup as soup  # grab page
 import os
 
-os.remove("data/data.json")
+#os.remove("data/data.json")
 myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&specialization=1&text=&experience=noExperience'
 
 driver = webdriver.Chrome('C:/ProgramData/chocolatey/lib/chromedriver/tools/chromedriver.exe')
-driver.get(myurl)
-time.sleep(1)
+#driver.get(myurl)
+#AUTH!!!!!!!!!!!!!!!!!!!!!!!!
 
+# driver.get('https://hh.ru/account/login?from=employer_index_header&backurl=%2Femployer')
+# username = driver.find_element_by_name('username')
+# username.send_keys('razilyakomleva@mail.ru')
+# password = driver.find_element_by_name('password')
+# password.click()
+# password.send_keys('Hfpbkz115')
+# username.submit()
+
+#sleep(300)
+#time.sleep(300)
+driver.get(myurl)
+#driver.Navigate().GoToUrl(myurl)
+time.sleep(1)
 # parse html
 page_soup = soup(driver.page_source, "html.parser")
 
 # grab reviews
-resume = page_soup.findAll("div", {"class": "resume-search-item__content"})
+resume = page_soup.findAll("div", {"data-qa": "resume-serp__resume"})
+#print(len(resume))
+#print(resume[0])
 # make the csv file
 
 filename = "data/data.csv"
@@ -28,17 +43,23 @@ f = io.open(filename, "w", encoding="utf-8")
 # headers of csv file
 headers = "title,href,last_work_place\n"
 buttons = page_soup.findAll("span", {"class": "pager-item-not-in-short-range"})
-
+print(len(buttons))
 last_page = buttons[-1].text
-
+botton = page_soup.findAll("a", {"class" : "bloko-button"})
+print(len(botton))
+print(botton[6])
 f.write(headers)
-
 i = 0
+j =0
 while i < int(last_page):
     i = i + 1
+    if (i < 3):
+        page = driver.find_element_by_xpath('/html/body/div[6]/div/div/div[3]/div/div/div/div[2]/div[2]/div/div[3]/div/span[3]/a').click()
+    if (i == 4):
+        page = ''#driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div/span[1]/span[4]/a').click()
     for res in resume:
-        title_Container = res.findAll("span", {"class": "bloko-section-header-3 bloko-section-header-3_lite"})
-        title = title_Container[0].text
+        j =j+1
+        title = res.find("span", {"class": "bloko-section-header-3 bloko-section-header-3_lite"}).text
         href = res.find("a").get('href')
         # last_work_Container = res.find("span", {"class": "resume-search-item__company-name"})
         # last_work = last_work_Container.get_text()
@@ -52,8 +73,8 @@ while i < int(last_page):
         #f.write()
         #f.write("{ title : " + title + ", href: " + href + ", last_work_place :" + last_work + "}"+"\n")
 
+print(j, i, last_page)
 
-#f.write("]")
 f.close()
 csvfile = open('data/data.csv', 'r', encoding="utf-8")
 jsonfile = open('data/data.json', 'w', encoding="utf-8")
@@ -64,4 +85,4 @@ for row in reader:
     json.dump(row, jsonfile)
     jsonfile.write(','+'\n')
 jsonfile.write(']'+'\n')
-#driver.close()
+driver.close()
