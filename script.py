@@ -45,18 +45,33 @@ headers = "title,href,last_work_place\n"
 buttons = page_soup.findAll("span", {"class": "pager-item-not-in-short-range"})
 print(len(buttons))
 last_page = buttons[-1].text
-botton = page_soup.findAll("a", {"class" : "bloko-button"})
-print(len(botton))
-print(botton[6])
+some_button = page_soup.findAll("span", {"class" : "bloko-form-spacer"})
+#last_button = some_button[4]
+# #some_button.findAll("a", {"class" : "bloko-button"})
+#last_button = page_soup.find_element_by_class_name('bloko-button')
+#print(some_button[4])
+print("_"*100)
+#print(button)
+#print(len(botton))
+#print(last_button)
 f.write(headers)
 i = 0
 j =0
-while i < int(last_page):
+while i < int(last_page)-1:
     i = i + 1
-    if (i < 3):
-        page = driver.find_element_by_xpath('/html/body/div[6]/div/div/div[3]/div/div/div/div[2]/div[2]/div/div[3]/div/span[3]/a').click()
-    if (i == 4):
-        page = ''#driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div/span[1]/span[4]/a').click()
+    #'//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div/span[3]/a'
+    #'//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div/span[3]'
+    #driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div/span[3]/a').click()
+
+    page_soup = soup(driver.page_source, "html.parser")
+    # grab reviews
+    resume = page_soup.findAll("div", {"data-qa": "resume-serp__resume"})
+    # if (i < 10):
+    #
+    #     page = last_button.click()
+    # if (i == 40):
+    #     page = ''#driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div/span[1]/span[4]/a').click()
+    #
     for res in resume:
         j =j+1
         title = res.find("span", {"class": "bloko-section-header-3 bloko-section-header-3_lite"}).text
@@ -73,6 +88,16 @@ while i < int(last_page):
         #f.write()
         #f.write("{ title : " + title + ", href: " + href + ", last_work_place :" + last_work + "}"+"\n")
 
+    #page = driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div/span[2]')
+    page = driver.find_element_by_xpath('//a[@data-qa="pager-next"]')#Для перехода на след страницу
+    driver.implicitly_wait(5)
+    page.click()
+    #time.sleep(3)
+    #driver.save_screenshot("hh.png")
+    #page_soup = soup(driver.page_source, "html.parser")
+    #resume = page_soup.findAll("div", {"data-qa": "resume-serp__resume"})
+
+
 print(j, i, last_page)
 
 f.close()
@@ -85,4 +110,4 @@ for row in reader:
     json.dump(row, jsonfile)
     jsonfile.write(','+'\n')
 jsonfile.write(']'+'\n')
-driver.close()
+#driver.close()
