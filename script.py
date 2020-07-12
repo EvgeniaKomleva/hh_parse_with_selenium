@@ -20,7 +20,7 @@ driver = webdriver.Chrome('C:/ProgramData/chocolatey/lib/chromedriver/tools/chro
 # username.send_keys('razilyakomleva@mail.ru')
 # password = driver.find_element_by_name('password')
 # password.click()
-# password.send_keys('Hfpbkz115')
+# password.send_keys('test')
 # username.submit()
 
 #sleep(300)
