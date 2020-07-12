@@ -57,8 +57,9 @@ print("_"*100)
 f.write(headers)
 i = 0
 j =0
-while i < int(last_page)-1:
+while (i <= int(last_page)):
     i = i + 1
+    print(i)
     #'//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div/span[3]/a'
     #'//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div/span[3]'
     #driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div/span[3]/a').click()
@@ -89,9 +90,13 @@ while i < int(last_page)-1:
         #f.write("{ title : " + title + ", href: " + href + ", last_work_place :" + last_work + "}"+"\n")
 
     #page = driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div/span[2]')
-    page = driver.find_element_by_xpath('//a[@data-qa="pager-next"]')#Для перехода на след страницу
-    driver.implicitly_wait(5)
-    page.click()
+    try:
+        page = driver.find_element_by_xpath('//a[@data-qa="pager-next"]')#Для перехода на след страницу
+        driver.implicitly_wait(5)
+        page.click()
+        #print(page != null )
+    except:
+        print("exept")
     #time.sleep(3)
     #driver.save_screenshot("hh.png")
     #page_soup = soup(driver.page_source, "html.parser")
