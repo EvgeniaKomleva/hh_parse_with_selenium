@@ -11,15 +11,17 @@ from selenium.webdriver.chrome.options import Options
 
 auth_status = 0
 options = ''
-if auth_status==1:
+if auth_status == 1:
     options = Options()
-    profile_path = r'C:\Users\komle\AppData\Local\Google\Chrome\User Data'
+    user_name = 'komle'  # впишите ваше имя компьютера
+    profile_path = r'C:\Users\{}\AppData\Local\Google\Chrome\User Data'.format(user_name)
     options.add_argument("user-data-dir={}".format(profile_path))
 
 myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&specialization=1&text=&experience=noExperience'
-#myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&text='
-driver = webdriver.Chrome(executable_path='C:/ProgramData/chocolatey/lib/chromedriver/tools/chromedriver.exe', chrome_options=options)
-#myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&label=only_with_salary&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&text=&salary_from=25000&salary_to=40000'
+# myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&text='
+driver = webdriver.Chrome(executable_path='C:/ProgramData/chocolatey/lib/chromedriver/tools/chromedriver.exe',
+                          chrome_options=options)
+# myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&label=only_with_salary&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&text=&salary_from=25000&salary_to=40000'
 # AUTH!!!!!!!!!!!!!!!!!!!!!!!!
 
 # driver.get('https://hh.ru/account/login?from=employer_index_header&backurl=%2Femployer')
@@ -52,9 +54,9 @@ j = 0
 
 while i < int(last_page):
     i = i + 1  # номер текущей страницы парсинга
-    #print(i)
-    #page_soup = soup(driver.page_source, "html.parser")  # получаем резюме с текущей страницы
-    #resume = page_soup.findAll("div", {"data-qa": "resume-serp__resume"})
+    # print(i)
+    # page_soup = soup(driver.page_source, "html.parser")  # получаем резюме с текущей страницы
+    # resume = page_soup.findAll("div", {"data-qa": "resume-serp__resume"})
 
     for res in resume:
         j = j + 1
@@ -72,14 +74,15 @@ while i < int(last_page):
     #     driver.implicitly_wait(5)
     #     page.click()
     # блок перехода на следующую страницу
-    k=0
+    k = 0
     try:
-        k = k+1
-        page = driver.find_element_by_xpath('//a[@data-qa="pager-next"]')  # Для перехода на след страницу (кроме последней!)
+        k = k + 1
+        page = driver.find_element_by_xpath(
+            '//a[@data-qa="pager-next"]')  # Для перехода на след страницу (кроме последней!)
         driver.implicitly_wait(5)
         page.click()
         driver.implicitly_wait(5)
-        #print("OK")
+        # print("OK")
     except:
         print(i)
 
@@ -90,11 +93,10 @@ while i < int(last_page):
         print('AAAAAAAAAAAAAAAAA')
         resume = page_soup.findAll("div", {"data-qa": "resume-serp__results-search"})
         print(i, resume)
-    #print(resume)                             resume-serp__results-search resume-serp__results-search
+    # print(resume)                             resume-serp__results-search resume-serp__results-search
     driver.implicitly_wait(5)
 
 print(k, j, i, last_page)
-
 
 # для последней страницы
 for res in resume:
