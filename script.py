@@ -30,10 +30,13 @@ f = io.open(filename, "w", encoding="utf-8")
 headers = "title,href,last_work_place\n"
 f.write(headers)
 
-buttons = page_soup.findAll("span", {"class": "pager-item-not-in-short-range"})
-last_page = 3 #buttons[-1].text
-print(last_page)  # получаем количество страниц для парсинга
-
+#buttons = page_soup.findAll("span", {"class": "pager-item-not-in-short-range"})
+#last_page = 3 #buttons[-1].text
+#print(last_page)  # получаем количество страниц для парсинга
+buttons = driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div').text
+print(len(buttons))
+last_page = str(buttons)[len(buttons)-8:-6].replace('...', '')
+print(last_page)
 i = 0
 
 while i < int(last_page):
