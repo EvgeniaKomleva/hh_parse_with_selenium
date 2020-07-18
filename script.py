@@ -113,7 +113,7 @@ def base(myurl, key_words, auth_status):
                 last_work = 'None'
 
             f.write(str(title).replace(',', ' ') + "," + str(href) + "," + str(last_work).replace(',', ' ') + "," + str(
-                match_count) + "," + str(all_job) + "," + str(citizenship) + "\n")
+                match_count) + "," + str(all_job).replace(',', ' ') + "," + str(citizenship) + "\n")
 
         # блок перехода на следующую страницу
         try:
@@ -141,7 +141,7 @@ def transform_to_json(driver):
     csvfile = open('data/data.csv', 'r', encoding="utf-8")
     jsonfile = open('data/data.json', 'w', encoding="utf-8")
     jsonfile.write('[' + '\n')
-    fieldnames = ("title", "href", "last_work_place")
+    fieldnames = ("title", "href", "last_work_place", "match_count","all_jobs", "citizenship")
     reader = csv.DictReader(csvfile, fieldnames)
     for row in reader:
         json.dump(row, jsonfile)
