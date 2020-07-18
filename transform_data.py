@@ -30,6 +30,7 @@ df_count_company = df_count_company[df_count_company.last_work_place != 'фри�
 df_count_company = df_count_company[df_count_company.last_work_place != 'Фриланс']
 df_count_company = df_count_company[df_count_company.last_work_place != "Freelance"]
 df_count_company = df_count_company[df_count_company.last_work_place != "-"]
+
 df_count_company.to_csv('resume/{}_{}_count_company_{}.csv'.format(file_name, current_day, auth), sep=';', index=False,
                         encoding='utf-8-sig')
 
@@ -39,6 +40,7 @@ sorted_data.drop(["Индивидуальное предпринимательс
 sorted_data.drop(["Фриланс"], inplace=True, errors='ignore')
 sorted_data.drop(["Freelance"], inplace=True, errors='ignore')
 sorted_data.drop(["фриланс"], inplace=True, errors='ignore')
+sorted_data = sorted_data[((sorted_data.citizenship == 'Россия') | (sorted_data.citizenship == 'Белaрусь')) ]
 
 sorted_data.reset_index(inplace=True)
 sorted_data = sorted_data.fillna(0)

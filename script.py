@@ -79,7 +79,7 @@ def base(myurl, key_words, auth_status):
     window_before = driver.window_handles[0]
     filename = "data/data.csv"
     f = io.open(filename, "w", encoding="utf-8")
-    headers = "title,href,last_work_place,match_count,all_jobs, citizenship\n"
+    headers = "title,href,last_work_place,match_count,all_jobs,citizenship\n"
     f.write(headers)
 
     last_page = 0
