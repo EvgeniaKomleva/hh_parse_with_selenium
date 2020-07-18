@@ -7,62 +7,32 @@ from bs4 import BeautifulSoup as soup
 from selenium.webdriver.chrome.options import Options
 
 
-# import get_url
-
-
 def multiply_request(urls, key_words, auth_status):
     for url in urls:
         base(url, key_words, auth_status)
 
 
 def click_on_resume(driver, key_words, resume, window_before, j):
-
-    #print(window_before)
-    #driver.implicitly_wait(10)
-    #print(resume.text)
     resume_button = resume.find_element_by_xpath(
         './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]/a')
-    #print(resume_button)
+
     resume_button.click()
     driver.implicitly_wait(50)
-    #print(driver.window_handles)
     window_after = driver.window_handles[1]
-    #print(window_after)
     driver.switch_to.window(window_after)  # чтобы перейти в другую вкладку
-    #print("Click complite!")
     match_count = get_key_words(driver, key_words, resume)
     all_job = get_all_job(driver)
-    # print(match_count)
+    citizenship = add_citizenship(driver)
     driver.implicitly_wait(150)
-    #job = driver.find_element_by_xpath(
-    #    './/div[@class="bloko-column bloko-column_xs-4 bloko-column_s-6 bloko-column_m-7 bloko-column_l-10"]').text
-    #print(job)
     driver.close()
     driver.switch_to.window(window_before)
     driver.implicitly_wait(50)
-    # try:
-    #     #print(len(resume_button))
-    #
-    #
-    #
-    #     driver.save_screenshot("hh.png")
-    #
-    #     # driver.close()
-    #
-    #
-    #
-    # except:
-    #     print("WTF")
-    #     match_count = 0
-    #     all_job = 0
-
-    #print(resume)
-    print(all_job)
-    return match_count, all_job
+    return match_count, all_job, citizenship
 
 
 def get_all_job(driver):
-    jobs_with_description = driver.find_element_by_xpath('.//div[@class="bloko-column bloko-column_xs-4 bloko-column_s-6 bloko-column_m-7 bloko-column_l-10"]')
+    jobs_with_description = driver.find_element_by_xpath(
+        './/div[@class="bloko-column bloko-column_xs-4 bloko-column_s-6 bloko-column_m-7 bloko-column_l-10"]')
     jobs = jobs_with_description.find_elements_by_xpath('.//div[@class="resume-block__sub-title"]')
     last_jobs = []
     for last_job in jobs:
@@ -79,6 +49,12 @@ def get_key_words(driver, key_words, resume):
             if skill == key:
                 match_count = match_count + 1
     return match_count
+
+
+def add_citizenship(driver):
+    citizenship_contein = driver.find_element_by_xpath('//div[@data-qa="resume-block-additional"]')
+    citizenship = citizenship_contein.find_element_by_xpath('.//div[@class="resume-block-container"]/p[1]').text
+    return citizenship[13:]
 
 
 def auth():
@@ -103,15 +79,15 @@ def base(myurl, key_words, auth_status):
     window_before = driver.window_handles[0]
     filename = "data/data.csv"
     f = io.open(filename, "w", encoding="utf-8")
-    headers = "title,href,last_work_place,match_count,all_jobs\n"
+    headers = "title,href,last_work_place,match_count,all_jobs, citizenship\n"
     f.write(headers)
 
     last_page = 0
     try:
         buttons = driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div').text
-        print(len(buttons))
+        #print(len(buttons))
         last_page = str(buttons)[len(buttons) - 8:-6].replace('...', '')
-        print(last_page)
+        #print(last_page)
     except:
         last_page = 1
     i = 0
@@ -120,7 +96,7 @@ def base(myurl, key_words, auth_status):
 
         i = i + 1  # номер текущей страницы парсинга
         for resume in all_resume:
-            j = j+1#Номер текущего резюме
+            j = j + 1  # Номер текущего резюме
             title_conteiner = resume.find_element_by_xpath('.//div[@class="resume-search-item__header"]')
             title = title_conteiner.find_element_by_xpath(
                 './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]').text
@@ -128,7 +104,7 @@ def base(myurl, key_words, auth_status):
                 './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]/a')
             href = href_contein.get_attribute('href')
 
-            match_count, all_job = click_on_resume(driver, key_words, resume, window_before, j)
+            match_count, all_job, citizenship = click_on_resume(driver, key_words, resume, window_before, j)
             last_work = ''
 
             try:
@@ -137,7 +113,7 @@ def base(myurl, key_words, auth_status):
                 last_work = 'None'
 
             f.write(str(title).replace(',', ' ') + "," + str(href) + "," + str(last_work).replace(',', ' ') + "," + str(
-                match_count) + "," + str(all_job) + "\n")
+                match_count) + "," + str(all_job) + "," + str(citizenship) + "\n")
 
         # блок перехода на следующую страницу
         try:
