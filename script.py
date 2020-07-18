@@ -5,7 +5,9 @@ import json
 from selenium import webdriver
 from bs4 import BeautifulSoup as soup
 from selenium.webdriver.chrome.options import Options
-#import get_url
+
+
+# import get_url
 
 
 def multiply_request(urls, key_words, auth_status):
@@ -13,32 +15,69 @@ def multiply_request(urls, key_words, auth_status):
         base(url, key_words, auth_status)
 
 
-def get_key_words(driver, key_words , conteiner):
-    all_key_word = ''
-    window_before = driver.window_handles[0]
-    driver.implicitly_wait(10)
+def click_on_resume(driver, key_words, resume, window_before, j):
 
-    try:
-        resume_button = conteiner.find_element_by_xpath(
-            './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]/a').click()
-        driver.implicitly_wait(10)
-        window_after = driver.window_handles[1]
-        driver.switch_to.window(window_after)  # чтобы перейти в другую вкладку
-        # driver.save_screenshot("hh.png")
-        expiriance = driver.find_element_by_xpath('.//div[@class="bloko-tag-list"]').text
-        skill_list = str(expiriance).split('\n')
-        match_count = 0
-        for skil in skill_list:
-            for key in key_words:
-                if (skil == key):
-                    match_count = match_count + 1
-        # driver.close()
-        driver.implicitly_wait(50)
-        driver.switch_to.window(window_before)
-        driver.implicitly_wait(50)
-    except:
-        match_count = 0
+    #print(window_before)
+    #driver.implicitly_wait(10)
+    #print(resume.text)
+    resume_button = resume.find_element_by_xpath(
+        './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]/a')
+    #print(resume_button)
+    resume_button.click()
+    driver.implicitly_wait(50)
+    #print(driver.window_handles)
+    window_after = driver.window_handles[1]
+    #print(window_after)
+    driver.switch_to.window(window_after)  # чтобы перейти в другую вкладку
+    #print("Click complite!")
+    match_count = get_key_words(driver, key_words, resume)
+    all_job = get_all_job(driver)
+    # print(match_count)
+    driver.implicitly_wait(150)
+    #job = driver.find_element_by_xpath(
+    #    './/div[@class="bloko-column bloko-column_xs-4 bloko-column_s-6 bloko-column_m-7 bloko-column_l-10"]').text
+    #print(job)
+    driver.close()
+    driver.switch_to.window(window_before)
+    driver.implicitly_wait(50)
+    # try:
+    #     #print(len(resume_button))
+    #
+    #
+    #
+    #     driver.save_screenshot("hh.png")
+    #
+    #     # driver.close()
+    #
+    #
+    #
+    # except:
+    #     print("WTF")
+    #     match_count = 0
+    #     all_job = 0
 
+    #print(resume)
+    print(all_job)
+    return match_count, all_job
+
+
+def get_all_job(driver):
+    jobs_with_description = driver.find_element_by_xpath('.//div[@class="bloko-column bloko-column_xs-4 bloko-column_s-6 bloko-column_m-7 bloko-column_l-10"]')
+    jobs = jobs_with_description.find_elements_by_xpath('.//div[@class="resume-block__sub-title"]')
+    last_jobs = []
+    for last_job in jobs:
+        last_jobs.append(last_job.text)
+    return last_jobs
+
+
+def get_key_words(driver, key_words, resume):
+    expiriance = driver.find_element_by_xpath('.//div[@class="bloko-tag-list"]').text
+    skill_list = str(expiriance).split('\n')
+    match_count = 0
+    for skill in skill_list:
+        for key in key_words:
+            if skill == key:
+                match_count = match_count + 1
     return match_count
 
 
@@ -61,10 +100,10 @@ def base(myurl, key_words, auth_status):
     time.sleep(1)
 
     all_resume = driver.find_elements_by_xpath('//div[@class="resume-search-item__content"]')
-
+    window_before = driver.window_handles[0]
     filename = "data/data.csv"
     f = io.open(filename, "w", encoding="utf-8")
-    headers = "title,href,last_work_place,match_count\n"
+    headers = "title,href,last_work_place,match_count,all_jobs\n"
     f.write(headers)
 
     last_page = 0
@@ -76,25 +115,29 @@ def base(myurl, key_words, auth_status):
     except:
         last_page = 1
     i = 0
-
+    j = 0
     while i < int(last_page):
 
         i = i + 1  # номер текущей страницы парсинга
         for resume in all_resume:
+            j = j+1#Номер текущего резюме
             title_conteiner = resume.find_element_by_xpath('.//div[@class="resume-search-item__header"]')
             title = title_conteiner.find_element_by_xpath(
                 './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]').text
             href_contein = title_conteiner.find_element_by_xpath(
                 './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]/a')
             href = href_contein.get_attribute('href')
-            match_count = 0 #get_key_words(driver,key_words, title_conteiner)
+
+            match_count, all_job = click_on_resume(driver, key_words, resume, window_before, j)
             last_work = ''
+
             try:
                 last_work = resume.find_element_by_xpath('.//span[@class="resume-search-item__company-name"]').text
             except:
                 last_work = 'None'
+
             f.write(str(title).replace(',', ' ') + "," + str(href) + "," + str(last_work).replace(',', ' ') + "," + str(
-                match_count) + "\n")
+                match_count) + "," + str(all_job) + "\n")
 
         # блок перехода на следующую страницу
         try:
@@ -102,6 +145,7 @@ def base(myurl, key_words, auth_status):
                 '//a[@data-qa="pager-next"]')  # Для перехода на след страницу (кроме последней!)
             page.click()
             driver.implicitly_wait(5)
+            window_before = driver.window_handles[0]
         except:
             print('last page done')
 
@@ -113,6 +157,7 @@ def base(myurl, key_words, auth_status):
 
     f.close()
     transform_to_json(driver)
+    print(last_page)
 
 
 def transform_to_json(driver):
@@ -130,11 +175,11 @@ def transform_to_json(driver):
 
 
 if __name__ == '__main__':
-    key_words = ''#['HTML', 'CSS']
+    key_words = ['HTML5', 'CSS3']
     url1 = ''
     url2 = ''
-    #urls = [url1, url2]
+    # urls = [url1, url2]
     auth_status = 0
-    myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&label=only_with_salary&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&specialization=1&text=&salary_from=25000&salary_to=40000&items_on_page=100'
+    myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&items_on_page=100&label=only_with_salary&logic=normal&no_magic=false&order_by=relevance&pos=full_text&salary_from=25000&salary_to=40000&search_period=1&text=&specialization=1.9'
     urls = [myurl]
     multiply_request(urls, key_words, auth_status)
