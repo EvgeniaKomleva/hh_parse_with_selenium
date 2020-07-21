@@ -10,6 +10,7 @@ file_name = file[:-4]
 config = ConfigParser()
 config.read(file)
 auth_status = config['parametrs']['auth_status']  # int(input("Do you want login? (1-yes, null -no): "))
+intersted_company = 'RASA' # нужно из конфига!!!!!!!!!!!!!!!
 
 auth = ''
 if auth_status == '1':
@@ -40,11 +41,15 @@ sorted_data.drop(["Индивидуальное предпринимательс
 sorted_data.drop(["Фриланс"], inplace=True, errors='ignore')
 sorted_data.drop(["Freelance"], inplace=True, errors='ignore')
 sorted_data.drop(["фриланс"], inplace=True, errors='ignore')
-sorted_data = sorted_data[((sorted_data.citizenship == 'Россия') | (sorted_data.citizenship == 'Белaрусь')) ]
+sorted_data = sorted_data[((sorted_data.citizenship == 'Россия') | (sorted_data.citizenship == 'Белaрусь'))]
 
 sorted_data.reset_index(inplace=True)
 sorted_data = sorted_data.fillna(0)
 sorted_data["count"] = sorted_data["count"].astype(int)
+sorted_data = sorted_data[sorted_data.match_count != 0]
+sorted_data = sorted_data[sorted_data['all_jobs'].str.contains(config['parametrs']['intersted_company'])]
+sorted_data.drop_duplicates(subset ="href", keep = False, inplace = True)
+
 query_len = len(config['parametrs']['search_text']) + 40
 sorted_data["href"] = sorted_data["href"].astype(str).str[0:59].astype(np.str)
 sorted_data.to_csv('resume/{}_{}_data_sort_{}.csv'.format(file_name, current_day, auth), sep=';', index=False,
