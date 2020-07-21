@@ -119,6 +119,10 @@
       <workItem from="1595052962902" duration="7942000" />
       <workItem from="1595072901072" duration="265000" />
       <workItem from="1595079474432" duration="3266000" />
+      <workItem from="1595141583475" duration="4308000" />
+      <workItem from="1595173592765" duration="938000" />
+      <workItem from="1595254625425" duration="1253000" />
+      <workItem from="1595316202479" duration="8762000" />
     </task>
     <servers />
   </component>
@@ -130,6 +134,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="361" y="92" key="#Inspections/0.0.1536.864@0.0.1536.864" timestamp="1594319514970" />
+    <state x="484" y="236" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1595326919254">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="484" y="236" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.864@0.0.1536.864" timestamp="1595326919254" />
     <state x="499" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1594285661249">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -154,10 +162,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state width="1493" height="223" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1594810283944" />
-    <state x="465" y="258" key="com.intellij.ide.util.TipDialog" timestamp="1595079551314">
+    <state x="465" y="258" key="com.intellij.ide.util.TipDialog" timestamp="1595316202349">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="465" y="258" key="com.intellij.ide.util.TipDialog/0.0.1536.864@0.0.1536.864" timestamp="1595079551314" />
+    <state x="465" y="258" key="com.intellij.ide.util.TipDialog/0.0.1536.864@0.0.1536.864" timestamp="1595316202349" />
     <state x="431" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1594994197928">
       <screen x="0" y="0" width="1536" height="864" />
     </state>

@@ -17,16 +17,16 @@ def click_on_resume(driver, key_words, resume, window_before, j):
         './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]/a')
 
     resume_button.click()
-    driver.implicitly_wait(50)
+    driver.implicitly_wait(5)
     window_after = driver.window_handles[1]
     driver.switch_to.window(window_after)  # чтобы перейти в другую вкладку
     match_count = get_key_words(driver, key_words, resume)
     all_job = get_all_job(driver)
     citizenship = add_citizenship(driver)
-    driver.implicitly_wait(150)
+    driver.implicitly_wait(5)
     driver.close()
     driver.switch_to.window(window_before)
-    driver.implicitly_wait(50)
+    driver.implicitly_wait(5)
     return match_count, all_job, citizenship
 
 
@@ -34,9 +34,9 @@ def get_all_job(driver):
     jobs_with_description = driver.find_element_by_xpath(
         './/div[@class="bloko-column bloko-column_xs-4 bloko-column_s-6 bloko-column_m-7 bloko-column_l-10"]')
     jobs = jobs_with_description.find_elements_by_xpath('.//div[@class="resume-block__sub-title"]')
-    last_jobs = []
+    last_jobs = ''
     for last_job in jobs:
-        last_jobs.append(last_job.text)
+        last_jobs = last_jobs + ' ' + last_job.text
     return last_jobs
 
 
@@ -137,7 +137,7 @@ def base(myurl, key_words, auth_status):
 
 
 def transform_to_json(driver):
-    # делаем json (А зачем?)
+    # делаем json
     csvfile = open('data/data.csv', 'r', encoding="utf-8")
     jsonfile = open('data/data.json', 'w', encoding="utf-8")
     jsonfile.write('[' + '\n')
@@ -151,7 +151,8 @@ def transform_to_json(driver):
 
 
 if __name__ == '__main__':
-    key_words = ['HTML5', 'CSS3']
+    key_words = ['HTML5', 'HTML', 'CSS3'] # нужно из конфига!!!!!!!!!!!!!!!
+    intersted_company = 'RASA'
     url1 = ''
     url2 = ''
     # urls = [url1, url2]
@@ -159,3 +160,7 @@ if __name__ == '__main__':
     myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&items_on_page=100&label=only_with_salary&logic=normal&no_magic=false&order_by=relevance&pos=full_text&salary_from=25000&salary_to=40000&search_period=1&text=&specialization=1.9'
     urls = [myurl]
     multiply_request(urls, key_words, auth_status)
+# фильтр на несовпадающих по ключевым словам кондидатов(в трансформ дата) -- OK
+# фильтр на дубли(повторяющиеся резюме) -- OK
+# фильтр компаний -- ОК
+# html ФИО

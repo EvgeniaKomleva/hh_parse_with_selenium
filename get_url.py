@@ -20,4 +20,4 @@ search_text = config['parametrs']['search_text'].encode('cp1251').decode('utf-8'
 auth_status = config['parametrs']['auth_status']  # int(input("Do you whant login? (1-yes, null -no): "))
 #print(auth_status)
 #url1 = ["https://hh.ru/search/resume?area="+area+"&clusters=true&exp_company_size=any&exp_industry=any&exp_period=all_time&logic=normal&no_magic=False&order_by=relevance&search_period="+search_period+"&pos=full_text%2Cworkplace_position&text="+search_text+"&specialization="+specialization]
-url = ["https://hh.ru/search/resume?area="+area+"&clusters=true&exp_company_size=any&exp_industry=any&exp_period=all_time&logic=normal&no_magic=False&order_by=relevance&pos=full_text%2Cworkplace_position&text="+search_text+"&specialization="+specialization+"&search_period="+search_period]
+url = ["https://hh.ru/search/resume?area="+area+"&clusters=true&exp_company_size=any&exp_industry=any&exp_period=all_time&logic=normal&no_magic=False&order_by=relevance&pos=full_text%2Cworkplace_position&text="+search_text+"&specialization="+specialization+"&search_period="+search_period+"&items_on_page=100"]
