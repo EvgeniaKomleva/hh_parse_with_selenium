@@ -106,7 +106,7 @@ def base(myurl, key_words, auth_status):
     print(last_page)
     i = 0
     j = 0
-    while i < int(7):
+    while i < int(last_page):
 
         i = i + 1  # номер текущей страницы парсинга
         for resume in all_resume:
