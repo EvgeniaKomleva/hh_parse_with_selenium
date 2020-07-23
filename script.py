@@ -1,3 +1,4 @@
+import datetime
 import time
 import io
 import csv
@@ -5,6 +6,9 @@ import json
 from selenium import webdriver
 from bs4 import BeautifulSoup as soup
 from selenium.webdriver.chrome.options import Options
+from datetime import datetime
+import time
+
 
 
 def multiply_request(urls, key_words, auth_status):
@@ -15,18 +19,21 @@ def multiply_request(urls, key_words, auth_status):
 def click_on_resume(driver, key_words, resume, window_before, j):
     resume_button = resume.find_element_by_xpath(
         './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]/a')
-
-    resume_button.click()
-    driver.implicitly_wait(5)
-    window_after = driver.window_handles[1]
-    driver.switch_to.window(window_after)  # чтобы перейти в другую вкладку
-    match_count = get_key_words(driver, key_words, resume)
-    all_job = get_all_job(driver)
-    citizenship = add_citizenship(driver)
-    driver.implicitly_wait(5)
-    driver.close()
-    driver.switch_to.window(window_before)
-    driver.implicitly_wait(5)
+    try:
+        resume_button.click()
+        driver.implicitly_wait(5)
+        window_after = driver.window_handles[1]
+        driver.switch_to.window(window_after)  # чтобы перейти в другую вкладку
+        match_count = get_key_words(driver, key_words, resume)
+        all_job = get_all_job(driver)
+        citizenship = add_citizenship(driver)
+        driver.implicitly_wait(5)
+        driver.close()
+        driver.switch_to.window(window_before)
+        driver.implicitly_wait(5)
+    except:
+        match_count, all_job, citizenship = 0, 0, 0
+        print("Not clickable")
     return match_count, all_job, citizenship
 
 
@@ -41,7 +48,10 @@ def get_all_job(driver):
 
 
 def get_key_words(driver, key_words, resume):
-    expiriance = driver.find_element_by_xpath('.//div[@class="bloko-tag-list"]').text
+    try:
+        expiriance = driver.find_element_by_xpath('.//div[@class="bloko-tag-list"]').text
+    except:
+        expiriance = ''
     skill_list = str(expiriance).split('\n')
     match_count = 0
     for skill in skill_list:
@@ -75,7 +85,8 @@ def base(myurl, key_words, auth_status):
     driver.get(myurl)
     time.sleep(1)
 
-    all_resume = driver.find_elements_by_xpath('//div[@class="resume-search-item__content"]')
+    all_resume = driver.find_elements_by_xpath('//div[@class="resume-search-item__content-wrapper"]')
+    print(len(all_resume))
     window_before = driver.window_handles[0]
     filename = "data/data.csv"
     f = io.open(filename, "w", encoding="utf-8")
@@ -90,9 +101,11 @@ def base(myurl, key_words, auth_status):
         #print(last_page)
     except:
         last_page = 1
+
+    print(last_page)
     i = 0
     j = 0
-    while i < int(last_page):
+    while i < int(7):
 
         i = i + 1  # номер текущей страницы парсинга
         for resume in all_resume:
@@ -124,9 +137,9 @@ def base(myurl, key_words, auth_status):
             window_before = driver.window_handles[0]
         except:
             print('last page done')
-
-        all_resume = driver.find_elements_by_xpath('//div[@class="resume-search-item__content"]')
-
+        all_resume_contein = driver.find_element_by_xpath('//div[@data-qa="resume-serp__results-search"]')
+        all_resume = all_resume_contein.find_elements_by_xpath('.//div[@data-qa="resume-serp__resume"]')
+        print(len(all_resume))
         if len(all_resume) == 0:
             print('AAAAAAAAAAAAAAAAA')
             print(i)
@@ -147,19 +160,24 @@ def transform_to_json(driver):
         json.dump(row, jsonfile)
         jsonfile.write(',' + '\n')
     jsonfile.write(']' + '\n')
-    driver.close()
+    #driver.close()
 
 
 if __name__ == '__main__':
+    start_time = datetime.now()
+
     key_words = ['HTML5', 'HTML', 'CSS3'] # нужно из конфига!!!!!!!!!!!!!!!
     intersted_company = 'RASA'
     url1 = ''
     url2 = ''
     # urls = [url1, url2]
     auth_status = 0
-    myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&items_on_page=100&label=only_with_salary&logic=normal&no_magic=false&order_by=relevance&pos=full_text&salary_from=25000&salary_to=40000&search_period=1&text=&specialization=1.9'
+    myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=20&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&specialization=1.327&text=&experience=between3And6'
+    #myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=20&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&text=&specialization=1.327'
+    #myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&items_on_page=100&label=only_with_salary&logic=normal&no_magic=false&order_by=relevance&pos=full_text&salary_from=25000&salary_to=40000&search_period=1&text=&specialization=1.9'
     urls = [myurl]
     multiply_request(urls, key_words, auth_status)
+    print(datetime.now() - start_time)
 # фильтр на несовпадающих по ключевым словам кондидатов(в трансформ дата) -- OK
 # фильтр на дубли(повторяющиеся резюме) -- OK
 # фильтр компаний -- ОК
