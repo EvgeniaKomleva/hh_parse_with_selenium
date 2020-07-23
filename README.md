@@ -11,9 +11,14 @@ pip install -r requirements.txt
 
 ```
 Запустите скрипты сбора объявлений для сайтов (я предворительно выбрала поиск по Москве и проф. области IT):
-### 1 способ(короткий):
+### Для формирования черного файла:
 ```
-python script.py
+python script.py config.ini 
+
+```
+### Для трансформации файла:
+```
+python transform_data.py config.ini 
 
 ```
 

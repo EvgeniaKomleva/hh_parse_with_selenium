@@ -10,7 +10,7 @@ file_name = file[:-4]
 config = ConfigParser()
 config.read(file)
 auth_status = config['parametrs']['auth_status']  # int(input("Do you want login? (1-yes, null -no): "))
-intersted_company = 'RASA' # нужно из конфига!!!!!!!!!!!!!!!
+intersted_company = config['parametrs']['intersted_company']
 
 auth = ''
 if auth_status == '1':
