@@ -9,7 +9,16 @@ from selenium.webdriver.chrome.options import Options
 from datetime import datetime
 import time
 import get_url
+import sys
+from configparser import ConfigParser
+import os
 
+def get_config():
+    file = str(sys.argv[1])  # 'java.ini'
+    file_name = file[:-4]
+    config = ConfigParser()
+    config.read(file)
+    auth_status = config['parametrs']['auth_status']  # int(input("Do you want login? (1-yes, null -no): "))
 
 
 def multiply_request(urls, key_words, auth_status):
