@@ -177,7 +177,7 @@ if __name__ == '__main__':
     config.read(file)
     auth_status = config['parametrs']['auth_status']  # int(input("Do you want login? (1-yes, null -no): "))
     user_name = config['parametrs']['user_name']
-    key_words = ['HTML5', 'HTML', 'CSS3'] # нужно из конфига!!!!!!!!!!!!!!!
+    key_words = config['parametrs']['key_word']#['HTML5', 'HTML', 'CSS3'] # нужно из конфига!!!!!!!!!!!!!!!
     intersted_company = 'RASA'
     url1 = ''
     url2 = ''
