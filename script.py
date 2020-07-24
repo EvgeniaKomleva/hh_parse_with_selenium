@@ -12,18 +12,14 @@ import get_url
 import sys
 from configparser import ConfigParser
 import os
-
-def get_config():
-    file = str(sys.argv[1])  # 'java.ini'
-    file_name = file[:-4]
-    config = ConfigParser()
-    config.read(file)
-    auth_status = config['parametrs']['auth_status']  # int(input("Do you want login? (1-yes, null -no): "))
+#
+# def get_config():
+#     return auth_status
 
 
-def multiply_request(urls, key_words, auth_status):
+def multiply_request(urls, key_words, auth_status, user_name):
     for url in urls:
-        base(url, key_words, auth_status)
+        base(url, key_words, auth_status, user_name)
 
 
 def click_on_resume(driver, key_words, resume, window_before, j):
@@ -77,18 +73,18 @@ def add_citizenship(driver):
     return citizenship[13:]
 
 
-def auth():
+def auth(user_name):
     options = Options()
-    user_name = 'komle'  # впишите ваше имя компьютера
+    #user_name = 'komle'  # впишите ваше имя компьютера
     profile_path = r'C:\Users\{}\AppData\Local\Google\Chrome\User Data'.format(user_name)
     options.add_argument("user-data-dir={}".format(profile_path))
     return options
 
 
-def base(myurl, key_words, auth_status):
+def base(myurl, key_words, auth_status, user_name):
     options = ''
     if auth_status == 1:
-        options = auth()
+        options = auth(user_name)
     driver = webdriver.Chrome(executable_path='C:/ProgramData/chocolatey/lib/chromedriver/tools/chromedriver.exe',
                               chrome_options=options)
 
@@ -175,18 +171,23 @@ def transform_to_json(driver):
 
 if __name__ == '__main__':
     start_time = datetime.now()
-
+    file = str(sys.argv[1])  # 'java.ini'
+    file_name = file[:-4]
+    config = ConfigParser()
+    config.read(file)
+    auth_status = config['parametrs']['auth_status']  # int(input("Do you want login? (1-yes, null -no): "))
+    user_name = config['parametrs']['user_name']
     key_words = ['HTML5', 'HTML', 'CSS3'] # нужно из конфига!!!!!!!!!!!!!!!
     intersted_company = 'RASA'
     url1 = ''
     url2 = ''
     # urls = [url1, url2]
-    auth_status = 0
+    #auth_status = 0
     myurl = get_url.url#'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=20&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&specialization=1.327&text=&experience=between3And6'
     #myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=20&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&text=&specialization=1.327'
     #myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&items_on_page=100&label=only_with_salary&logic=normal&no_magic=false&order_by=relevance&pos=full_text&salary_from=25000&salary_to=40000&search_period=1&text=&specialization=1.9'
     urls = [myurl]
-    multiply_request(urls, key_words, auth_status)
+    multiply_request(urls, key_words, auth_status, user_name)
     print(datetime.now() - start_time)
 # фильтр на несовпадающих по ключевым словам кондидатов(в трансформ дата) -- OK
 # фильтр на дубли(повторяющиеся резюме) -- OK
