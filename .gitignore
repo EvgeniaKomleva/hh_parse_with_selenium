@@ -1,3 +1,4 @@
-resume/*
+resume
 .ipynb_checkpoints
 .idea
+data
