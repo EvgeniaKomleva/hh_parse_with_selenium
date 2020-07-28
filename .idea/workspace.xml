@@ -28,7 +28,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../CVlizer-master" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../untitled" />
   </component>
   <component name="RunManager" selected="Python.script">
     <configuration name="script" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -126,6 +126,9 @@
       <workItem from="1595409840441" duration="700000" />
       <workItem from="1595517952799" duration="11205000" />
       <workItem from="1595577029048" duration="4216000" />
+      <workItem from="1595677910047" duration="647000" />
+      <workItem from="1595751388119" duration="2147000" />
+      <workItem from="1595920999084" duration="2058000" />
     </task>
     <servers />
   </component>
@@ -145,10 +148,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="499" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1536.864@0.0.1536.864" timestamp="1594285661249" />
-    <state x="549" y="188" key="FileChooserDialogImpl" timestamp="1594898261781">
+    <state x="549" y="188" key="FileChooserDialogImpl" timestamp="1595921024270">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="549" y="188" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1594898261781" />
+    <state x="549" y="188" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1595921024270" />
     <state width="1493" height="223" key="GridCell.Tab.0.bottom" timestamp="1594810283944">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -165,10 +168,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state width="1493" height="223" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1594810283944" />
-    <state x="465" y="258" key="com.intellij.ide.util.TipDialog" timestamp="1595677915706">
+    <state x="465" y="258" key="com.intellij.ide.util.TipDialog" timestamp="1595921001434">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="465" y="258" key="com.intellij.ide.util.TipDialog/0.0.1536.864@0.0.1536.864" timestamp="1595677915706" />
+    <state x="465" y="258" key="com.intellij.ide.util.TipDialog/0.0.1536.864@0.0.1536.864" timestamp="1595921001434" />
     <state x="431" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1594994197928">
       <screen x="0" y="0" width="1536" height="864" />
     </state>

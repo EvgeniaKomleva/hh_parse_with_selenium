@@ -12,14 +12,16 @@ import get_url
 import sys
 from configparser import ConfigParser
 import os
-#
-# def get_config():
-#     return auth_status
+
+def get_contact_hr(driver):
+    name = driver.find_element_by_xpath('//div[@class="resume-header-name"]').text
+    
+    return name
 
 
-def multiply_request(urls, key_words, auth_status, user_name):
+def multiply_request(urls, key_words, auth_status, user_name, are_you_hr):
     for url in urls:
-        base(url, key_words, auth_status, user_name)
+        base(url, key_words, auth_status, user_name, are_you_hr)
 
 
 def click_on_resume(driver, key_words, resume, window_before, j):
@@ -81,7 +83,7 @@ def auth(user_name):
     return options
 
 
-def base(myurl, key_words, auth_status, user_name):
+def base(myurl, key_words, auth_status, user_name, are_you_hr):
     options = ''
     if auth_status == 1:
         options = auth(user_name)
@@ -116,23 +118,25 @@ def base(myurl, key_words, auth_status, user_name):
         i = i + 1  # номер текущей страницы парсинга
         for resume in all_resume:
             j = j + 1  # Номер текущего резюме
-            title_conteiner = resume.find_element_by_xpath('.//div[@class="resume-search-item__header"]')
-            title = title_conteiner.find_element_by_xpath(
-                './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]').text
-            href_contein = title_conteiner.find_element_by_xpath(
-                './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]/a')
-            href = href_contein.get_attribute('href')
-
+            #title_conteiner = resume.find_element_by_xpath('.//div[@class="resume-search-item__header"]')
+            title = resume.find_element_by_class_name('resume-search-item__name').text
+            #title = title_conteiner.find_element_by_xpath(
+            #    './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]').text
+            #href_contein = title_conteiner.find_element_by_xpath(
+            #    './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]/a')
+            href = resume.find_element_by_class_name('resume-search-item__name').get_attribute('href')
+            if are_you_hr == 1:
+                get
             match_count, all_job, citizenship = click_on_resume(driver, key_words, resume, window_before, j)
             last_work = ''
 
             try:
-                last_work = resume.find_element_by_xpath('.//span[@class="resume-search-item__company-name"]').text
+                last_work = resume.find_element_by_class_name('resume-search-item__company-name').text
             except:
                 last_work = 'None'
 
             f.write(str(title).replace(',', ' ') + "," + str(href) + "," + str(last_work).replace(',', ' ') + "," + str(
-                match_count) + "," + str(all_job).replace(',', ' ') + "," + str(citizenship) + "\n")
+                match_count) + "," + str(all_job).replace(',', ' ') + "," + str(citizenship).replace(',', ' ') + "\n")
 
         # блок перехода на следующую страницу
         try:
@@ -146,9 +150,6 @@ def base(myurl, key_words, auth_status, user_name):
         all_resume_contein = driver.find_element_by_xpath('//div[@data-qa="resume-serp__results-search"]')
         all_resume = all_resume_contein.find_elements_by_xpath('.//div[@data-qa="resume-serp__resume"]')
         print(len(all_resume))
-        if len(all_resume) == 0:
-            print('AAAAAAAAAAAAAAAAA')
-            print(i)
 
     f.close()
     transform_to_json(driver)
@@ -179,6 +180,7 @@ if __name__ == '__main__':
     user_name = config['parametrs']['user_name']
     key_words = config['parametrs']['key_word']#['HTML5', 'HTML', 'CSS3'] # нужно из конфига!!!!!!!!!!!!!!!
     intersted_company = 'RASA'
+    are_you_hr = config['parametrs']['are_you_hr']
     url1 = ''
     url2 = ''
     # urls = [url1, url2]
@@ -187,7 +189,7 @@ if __name__ == '__main__':
     #myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=20&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&text=&specialization=1.327'
     #myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&items_on_page=100&label=only_with_salary&logic=normal&no_magic=false&order_by=relevance&pos=full_text&salary_from=25000&salary_to=40000&search_period=1&text=&specialization=1.9'
     urls = [myurl]
-    multiply_request(urls, key_words, auth_status, user_name)
+    multiply_request(urls, key_words, auth_status, user_name, are_you_hr)
     print(datetime.now() - start_time)
 # фильтр на несовпадающих по ключевым словам кондидатов(в трансформ дата) -- OK
 # фильтр на дубли(повторяющиеся резюме) -- OK
