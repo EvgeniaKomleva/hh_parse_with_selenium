@@ -21,8 +21,10 @@ time = str(datetime.datetime.now().time())
 time_str = time[0:2] + time[3:5]
 current_day = current_datetime[0:4] + current_datetime[5:7] + current_datetime[8:11] + time_str
 
-data = pd.read_csv('data/data1.csv')
-#data["href"] = 'https://hh.ru' + data["href"]
+data = pd.read_csv('data/data.csv')
+
+#data["href"] = data["href"][9:]
+data["href"] = 'https://hh.ru' + data["href"]
 count_company = data["last_work_place"].value_counts()
 df_count_company = pd.DataFrame({'last_work_place': count_company.index, 'count': count_company.values})
 df_count_company = df_count_company[
@@ -47,13 +49,13 @@ sorted_data.reset_index(inplace=True)
 sorted_data = sorted_data.fillna(0)
 sorted_data["count"] = sorted_data["count"].astype(int)
 #sorted_data = sorted_data[sorted_data.match_count != 0]
-try:
-    sorted_data = sorted_data[sorted_data['all_jobs'].str.contains(config['parametrs']['intersted_company'])]
-except:
-    print("oops")
+
+#sorted_data = sorted_data[sorted_data['all_jobs'].str.contains(config['parametrs']['intersted_company'])]
+
 #sorted_data.drop_duplicates(subset ="href", keep = False, inplace = True)
 
 query_len = len(config['parametrs']['search_text']) + 40
+#sorted_data["href"] = sorted_data["href"].astype(str).str[0:59].astype(np.str)
 sorted_data["href"] = sorted_data["href"].astype(str).str[0:59].astype(np.str)
 sorted_data.to_csv('resume/{}_{}_data_sort_{}.csv'.format(file_name, current_day, auth), sep=';', index=False,
                    encoding='utf-8-sig')

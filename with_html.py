@@ -1,10 +1,9 @@
 import datetime
-import time
+import pathlib
 import io
 import csv
 import json
 from selenium import webdriver
-from bs4 import BeautifulSoup as soup
 from selenium.webdriver.chrome.options import Options
 from datetime import datetime
 import time
@@ -23,26 +22,6 @@ def multiply_request(urls, key_words, auth_status, user_name, are_you_hr):
     for url in urls:
         base(url, key_words, auth_status, user_name, are_you_hr)
 
-
-def click_on_resume(driver, key_words, resume, window_before, j):
-    resume_button = resume.find_element_by_xpath(
-        './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]/a')
-    try:
-        resume_button.click()
-        driver.implicitly_wait(5)
-        window_after = driver.window_handles[1]
-        driver.switch_to.window(window_after)  # чтобы перейти в другую вкладку
-        match_count = get_key_words(driver, key_words, resume)
-        all_job = get_all_job(driver)
-        citizenship = add_citizenship(driver)
-        driver.implicitly_wait(5)
-        driver.close()
-        driver.switch_to.window(window_before)
-        driver.implicitly_wait(5)
-    except:
-        match_count, all_job, citizenship = 0, 0, 0
-        print("Not clickable")
-    return match_count, all_job, citizenship
 
 
 def get_all_job(driver):
@@ -87,47 +66,46 @@ def base(myurl, key_words, auth_status, user_name, are_you_hr):
     options = ''
     if auth_status == 1:
         options = auth(user_name)
-    driver = webdriver.Chrome(executable_path='C:/ProgramData/chocolatey/lib/chromedriver/tools/chromedriver.exe',
-                              chrome_options=options)
-    print(driver)
-    driver.get(myurl)
+
+    driver = webdriver.Chrome()
+    #html_file = os.getcwd() + "//" + "input//index.html"
+    #print(html_file)
+    #driver.get("file:///" + html_file)
     time.sleep(1)
 
-    all_resume = driver.find_elements_by_xpath('//div[@class="resume-search-item__content-wrapper"]')
-    print(len(all_resume))
+    #all_resume = driver.find_elements_by_xpath('//div[@class="resume-search-item__content-wrapper"]')
+    #print(len(all_resume))
     window_before = driver.window_handles[0]
     filename = "data/data.csv"
     f = io.open(filename, "w", encoding="utf-8")
-    headers = "title,href,last_work_place,match_count,all_jobs,citizenship\n"
+    headers = "title,href,last_work_place\n"
     f.write(headers)
 
-    last_page = 0
-    try:
-        buttons = driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div[2]/div[2]/div/div[3]/div').text
-        #print(len(buttons))
-        last_page = str(buttons)[len(buttons) - 8:-6].replace('...', '')
-        #print(last_page)
-    except:
-        last_page = 1
 
-    print(last_page)
+    last_page = 0
+    path = os.getcwd() + "//" + "input"
+    #print(os.tempfile())
+
+            #last_page += 1
+    #driver.get("file:///" + r'C:\Users\komle\PycharmProjects\hh_parse_with_selenium\input\index.html')
+    #print(last_page)
     i = 0
     j = 0
-    while i < int(last_page):
+    for path in pathlib.Path(path).iterdir():
+        if path.is_file():
+            name = os.path.basename(path)
+            print(os.path.basename(path))
+            html_file = os.getcwd() + "//" + "input//" + name
+            driver.get("file:///" + html_file)
+            all_resume = driver.find_elements_by_xpath('//div[@class="resume-search-item__content-wrapper"]')
+
+            time.sleep(5)
 
         i = i + 1  # номер текущей страницы парсинга
         for resume in all_resume:
             j = j + 1  # Номер текущего резюме
-            #title_conteiner = resume.find_element_by_xpath('.//div[@class="resume-search-item__header"]')
             title = resume.find_element_by_class_name('resume-search-item__name').text
-            #title = title_conteiner.find_element_by_xpath(
-            #    './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]').text
-            #href_contein = title_conteiner.find_element_by_xpath(
-            #    './/span[@class="bloko-section-header-3 bloko-section-header-3_lite"]/a')
             href = resume.find_element_by_class_name('resume-search-item__name').get_attribute('href')
-            if are_you_hr == 1:
-                get_contact_hr(driver)
-            match_count, all_job, citizenship = click_on_resume(driver, key_words, resume, window_before, j)
             last_work = ''
 
             try:
@@ -135,21 +113,10 @@ def base(myurl, key_words, auth_status, user_name, are_you_hr):
             except:
                 last_work = 'None'
 
-            f.write(str(title).replace(',', ' ') + "," + str(href) + "," + str(last_work).replace(',', ' ') + "," + str(
-                match_count) + "," + str(all_job).replace(',', ' ') + "," + str(citizenship).replace(',', ' ') + "\n")
+            f.write(str(title).replace(',', ' ') + "," + str(href).replace('file:///C:', '') + "," + str(last_work).replace(',', ' ') + "\n")
 
         # блок перехода на следующую страницу
-        try:
-            page = driver.find_element_by_xpath(
-                '//a[@data-qa="pager-next"]')  # Для перехода на след страницу (кроме последней!)
-            page.click()
-            driver.implicitly_wait(5)
-            window_before = driver.window_handles[0]
-        except:
-            print('last page done')
-        all_resume_contein = driver.find_element_by_xpath('//div[@data-qa="resume-serp__results-search"]')
-        all_resume = all_resume_contein.find_elements_by_xpath('.//div[@data-qa="resume-serp__resume"]')
-        print(len(all_resume))
+
 
     f.close()
     transform_to_json(driver)
@@ -167,7 +134,6 @@ def transform_to_json(driver):
         json.dump(row, jsonfile)
         jsonfile.write(',' + '\n')
     jsonfile.write(']' + '\n')
-    #driver.close()
 
 
 if __name__ == '__main__':
