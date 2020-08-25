@@ -7,21 +7,20 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from datetime import datetime
 import time
-import get_url
 import sys
 from configparser import ConfigParser
 import os
 
+
 def get_contact_hr(driver):
     name = driver.find_element_by_xpath('//div[@class="resume-header-name"]').text
-    
+
     return name
 
 
-def multiply_request(urls, key_words, auth_status, user_name, are_you_hr):
+def multiply_request(urls):
     for url in urls:
-        base(url, key_words, auth_status, user_name, are_you_hr)
-
+        base(url)
 
 
 def get_all_job(driver):
@@ -56,39 +55,26 @@ def add_citizenship(driver):
 
 def auth(user_name):
     options = Options()
-    #user_name = 'komle'  # впишите ваше имя компьютера
+    # user_name = 'komle'  # впишите ваше имя компьютера
     profile_path = r'C:\Users\{}\AppData\Local\Google\Chrome\User Data'.format(user_name)
     options.add_argument("user-data-dir={}".format(profile_path))
     return options
 
 
-def base(myurl, key_words, auth_status, user_name, are_you_hr):
+def base(myurl):
     options = ''
-    if auth_status == 1:
-        options = auth(user_name)
-
-    driver = webdriver.Chrome()
-    #html_file = os.getcwd() + "//" + "input//index.html"
-    #print(html_file)
-    #driver.get("file:///" + html_file)
+    print(config['parametrs']['chrome_options'])
+    driver = webdriver.Chrome(executable_path=config['parametrs']['chrome_path'],
+                              chrome_options=config['parametrs']['chrome_options'])
     time.sleep(1)
 
-    #all_resume = driver.find_elements_by_xpath('//div[@class="resume-search-item__content-wrapper"]')
-    #print(len(all_resume))
-    window_before = driver.window_handles[0]
     filename = "data/data.csv"
     f = io.open(filename, "w", encoding="utf-8")
     headers = "title,href,last_work_place\n"
     f.write(headers)
 
-
     last_page = 0
     path = os.getcwd() + "//" + "input"
-    #print(os.tempfile())
-
-            #last_page += 1
-    #driver.get("file:///" + r'C:\Users\komle\PycharmProjects\hh_parse_with_selenium\input\index.html')
-    #print(last_page)
     i = 0
     j = 0
     for path in pathlib.Path(path).iterdir():
@@ -113,10 +99,11 @@ def base(myurl, key_words, auth_status, user_name, are_you_hr):
             except:
                 last_work = 'None'
 
-            f.write(str(title).replace(',', ' ') + "," + str(href).replace('file:///C:', '') + "," + str(last_work).replace(',', ' ') + "\n")
+            f.write(
+                str(title).replace(',', ' ') + "," + str(href).replace('file:///C:', '') + "," + str(last_work).replace(
+                    ',', ' ') + "\n")
 
         # блок перехода на следующую страницу
-
 
     f.close()
     transform_to_json(driver)
@@ -128,7 +115,7 @@ def transform_to_json(driver):
     csvfile = open('data/data.csv', 'r', encoding="utf-8")
     jsonfile = open('data/data.json', 'w', encoding="utf-8")
     jsonfile.write('[' + '\n')
-    fieldnames = ("title", "href", "last_work_place", "match_count","all_jobs", "citizenship")
+    fieldnames = ("title", "href", "last_work_place", "match_count", "all_jobs", "citizenship")
     reader = csv.DictReader(csvfile, fieldnames)
     for row in reader:
         json.dump(row, jsonfile)
@@ -142,23 +129,18 @@ if __name__ == '__main__':
     file_name = file[:-4]
     config = ConfigParser()
     config.read(file)
-    auth_status = config['parametrs']['auth_status']  # int(input("Do you want login? (1-yes, null -no): "))
-    user_name = config['parametrs']['user_name']
-    key_words = config['parametrs']['key_word']#['HTML5', 'HTML', 'CSS3'] # нужно из конфига!!!!!!!!!!!!!!!
-    intersted_company = 'RASA'
-    are_you_hr = config['parametrs']['are_you_hr']
     url1 = ''
     url2 = ''
     # urls = [url1, url2]
-    #auth_status = 0
-    #myurl = get_url.url#'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=20&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&specialization=1.327&text=&experience=between3And6'
-    #myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=20&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&text=&specialization=1.327'
-    #myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&items_on_page=100&label=only_with_salary&logic=normal&no_magic=false&order_by=relevance&pos=full_text&salary_from=25000&salary_to=40000&search_period=1&text=&specialization=1.9'
+    # auth_status = 0
+    # myurl = get_url.url#'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=20&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&specialization=1.327&text=&experience=between3And6'
+    # myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=20&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=1&text=&specialization=1.327'
+    # myurl = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&experience=noExperience&items_on_page=100&label=only_with_salary&logic=normal&no_magic=false&order_by=relevance&pos=full_text&salary_from=25000&salary_to=40000&search_period=1&text=&specialization=1.9'
     myurl = 'https://hh.ru/search/resume?clusters=True&area=1&specialization=1&order_by=relevance&items_on_page=100&search_period=365&logic=normal&pos=full_text&exp_period=all_time&experience=between3And6&no_magic=False&st=resumeSearch&text=%D0%B1%D0%BE%D1%82'
     myurl2 = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=100&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=365&specialization=1&text=%D0%B1%D0%BE%D1%82&experience=moreThan6'
-    #myurl3 = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=100&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=30&skill=1114&specialization=1&text=bot&experience=moreThan6'
+    # myurl3 = 'https://hh.ru/search/resume?area=1&clusters=true&exp_period=all_time&items_on_page=100&logic=normal&no_magic=false&order_by=relevance&pos=full_text&search_period=30&skill=1114&specialization=1&text=bot&experience=moreThan6'
     urls = [myurl]
-    multiply_request(urls, key_words, auth_status, user_name, are_you_hr)
+    multiply_request(urls)
     print(datetime.now() - start_time)
 # фильтр на несовпадающих по ключевым словам кондидатов(в трансформ дата) -- OK
 # фильтр на дубли(повторяющиеся резюме) -- OK

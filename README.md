@@ -22,12 +22,12 @@ pip install -r requirements.txt
 ## Как запусть если у вас уже есть html код сраниц, которые вы хотите спарсить: 
 Разместите код страниц в папке input и в консоли выполните (формируется ченовой файл):
 ```
-python with_html.py config.ini
+python with_html.py config.ini  
 
 ```
 Чтобы получить трансформированные файлы: 
 ```
-python transform_data_html.py config.ini 
+python transform_data_html.py config.ini  
 
 ```
 
