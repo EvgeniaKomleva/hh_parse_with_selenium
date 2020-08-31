@@ -13,8 +13,7 @@ current_day = current_datetime[0:4] + current_datetime[5:7] + current_datetime[8
 
 data = pd.read_csv('data/data.csv')
 
-#data["href"] = data["href"][9:]
-data["href"] = 'https://hh.ru' + data["href"]
+#data["href"] = 'https://hh.ru' + data["href"]
 count_company = data["last_work_place"].value_counts()
 df_count_company = pd.DataFrame({'last_work_place': count_company.index, 'count': count_company.values})
 df_count_company = df_count_company[
@@ -45,7 +44,8 @@ sorted_data["count"] = sorted_data["count"].astype(int)
 #sorted_data.drop_duplicates(subset ="href", keep = False, inplace = True)
 
 #sorted_data["href"] = sorted_data["href"].astype(str).str[0:59].astype(np.str)
-sorted_data["href"] = sorted_data["href"].astype(str).str[0:59].astype(np.str)
+#sorted_data["href"] = sorted_data["href"].astype(str).str[0:59].astype(np.str)
+sorted_data["href"].replace(r".query=.*", '', regex=True, inplace = True)
 sorted_data.to_csv('resume/{}_{}_data_sort.csv'.format('config', current_day), sep=';', index=False,
                    encoding='utf-8-sig')
 # os.remove("data/data.json")

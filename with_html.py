@@ -63,6 +63,7 @@ def auth(user_name):
 
 def base(myurl):
     options = ''
+
     print(config['parametrs']['chrome_options'])
     driver = webdriver.Chrome(executable_path=config['parametrs']['chrome_path'],
                               chrome_options=config['parametrs']['chrome_options'])
@@ -70,7 +71,7 @@ def base(myurl):
 
     filename = "data/data.csv"
     f = io.open(filename, "w", encoding="utf-8")
-    headers = "title,href,last_work_place\n"
+    headers = "title,href,last_work_place,private_info, exp_salary\n"
     f.write(headers)
 
     last_page = 0
@@ -93,15 +94,18 @@ def base(myurl):
             title = resume.find_element_by_class_name('resume-search-item__name').text
             href = resume.find_element_by_class_name('resume-search-item__name').get_attribute('href')
             last_work = ''
-
+            #print(resume.text)
             try:
                 last_work = resume.find_element_by_class_name('resume-search-item__company-name').text
+                person_name = resume.find_element_by_class_name('resume-search-item__fullname').text
+                exp_salary = resume.find_element_by_class_name('resume-search-item__compensation').text
             except:
                 last_work = 'None'
-
+                person_name = 'None'
+                exp_salary = 'None'
             f.write(
                 str(title).replace(',', ' ') + "," + str(href).replace('file:///C:', '') + "," + str(last_work).replace(
-                    ',', ' ') + "\n")
+                    ',', ' ')+", " +str(person_name).replace(',', '') + ", " +str(exp_salary).replace(',', '') + "\n")
 
         # блок перехода на следующую страницу
 
