@@ -7,7 +7,7 @@ google-auth==1.13.1
 google-auth-oauthlib==0.4.1
 idna==2.10
 Keras-Applications==1.0.8
-lxml==4.5.1
+lxml==4.6.2
 Markdown==3.2.1
 numpy==1.19.0
 oauthlib==3.1.0
